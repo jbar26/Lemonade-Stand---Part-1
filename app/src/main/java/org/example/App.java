@@ -2,35 +2,10 @@ package org.example;
 import java.util.Scanner;
 
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
-    private static void printPrepMenu(int d, boolean start, Player p)
+    public static Scanner keys = new Scanner(System.in);
+
+public static void main(String[] args)
     {
-        if(start)
-        {
-            System.out.println("\nDay " + d + ": Preparation Phase");
-            System.out.println("Let's prepare for the day!");
-        }
-        System.out.println();
-        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println("\n" + p.getInventory());
-        System.out.println("\n1. Purchase Ingredients");
-        System.out.println("2. Tweak the Recipe");
-        System.out.println("3. Set the Price");
-        System.out.println("4. Make Pitchers of Lemonade");
-        System.out.println("5. Move onto the Selling Phase");
-        System.out.println("6. Quit");
-        System.out.println();
-
-
-    }
-
-
-    public static void main(String[] args)
-    {
-
-        Scanner keys = new Scanner(System.in);
         System.out.println();
         System.out.println("Welcome to The Lemonade Stand!");
         Player player = new Player();
@@ -43,15 +18,12 @@ public class App {
             while(isPrepping)
             {
                 printPrepMenu(day, isStartOfDay, player);
-                System.out.print("What would you like to do?  ");
-                int response = keys.nextInt();
+                int response = readInt("What would you like to do?", 1, 6);
                 if(response == 1)
                 {
                     System.out.print("\nLemons are $1 each\nSugar is $0.50 per cup.");
-                    System.out.print("\nHow many lemons do you want to buy? ");
-                    int numLemons = keys.nextInt();
-                    System.out.print("\nHow many cups of sugar do you want to buy? ");
-                    int numSugar = keys.nextInt();
+                    int numLemons = readInt("\nHow many lemons do you want to buy? ", 0, 1000000);
+                    int numSugar = readInt("\nHow many cups of sugar do you want to buy? ", 0, 1000000);
                     boolean success = player.purchaseIngredients(numLemons, numSugar);
                     if (success)
                     {
@@ -63,12 +35,9 @@ public class App {
                 }
                 else if(response == 2)
                 {
-                    System.out.print("\nHow many lemons do you want per pitcher?  ");
-                    int numLemons = keys.nextInt();
-                    System.out.print("\nHow many cups of sugar do you want per pitcher? ");
-                    int numSugar = keys.nextInt();
-                    System.out.print("\nHow many cups of water do you want per pitcher? ");
-                    int numWater = keys.nextInt();
+                    int numLemons = readInt("\nHow many lemons do you want per pitcher?  ", 0, 1000000);
+                    int numSugar = readInt("\nHow many cups of sugar do you want per pitcher? ", 0, 1000000);
+                    int numWater = readInt("\nHow many cups of water do you want per pitcher? ", 0, 1000000);
                     boolean success = player.tweakRecipe(numLemons, numSugar, numWater);
                     if(success)
                     {
@@ -80,9 +49,9 @@ public class App {
                 }
                 else if(response == 3)
                 {
-                    System.out.print("\nHow much will you sell one cup of lemonade for? ");
-                    System.out.print("\nRemember, one pitcher is 8 cups.  ");
-                    double price = keys.nextDouble();
+                    System.out.print("\nOne pitcher is 8 cups.  ");
+
+                    double price = readDouble("\nHow much do you want to sell each cup of lemonade for? ", 0.0, 1000000);
                     String priceFormatted = String.format("%.2f", price);
                     player.setPricePerCup(price);
                     System.out.println("\nGreat! Each cup of lemonade is $" + priceFormatted);
@@ -90,8 +59,7 @@ public class App {
                 }
                 else if(response == 4)
                 {
-                    System.out.print("\nHow many pitchers of lemonade do you want to make?  ");
-                    int numPitchers = keys.nextInt();
+                    int numPitchers = readInt("\nHow many pitchers of lemonade do you want to make?  ", 0, 1000000);
                     boolean success = player.makePitchers(numPitchers);
                     // move print statements here and pass in more parameter for lemons needed, etc.
                 }
@@ -114,13 +82,7 @@ public class App {
                 System.out.print("\n\n" + numCustomers + " customers visited your stand today!  ");
 
                 player.sellLemonade(numCustomers);
-//                double profit = numCustomers * player.getPricePerCup();
-//                String profitFormatted = String.format("%.2f", profit);
-//                player.setBalance(player.getBalance() + profit);
-//                System.out.print("\nYou sold " +  numCustomers + " cups of lemonade for $" + profitFormatted);
-//
-//                System.out.print("\nUnfortunately, you did not sell the remaining " + player.getLeftOvers(numCustomers));
-//                player.setNumPitchers(0);
+
                 if(player.getBalance() <=0)
                 {
                     System.out.println("You have no money to purchase ingredients to make and sell lemonade.");
@@ -136,7 +98,74 @@ public class App {
             }
         }
         System.out.println("Thank you for playing!");
+    }
 
+    private static void printPrepMenu(int d, boolean start, Player p)
+    {
+        if(start)
+        {
+            System.out.println("\nDay " + d + ": Preparation Phase");
+            System.out.println("Let's prepare for the day!");
+        }
+        System.out.println();
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println("\n" + p.getInventory());
+        System.out.println("\n1. Purchase Ingredients");
+        System.out.println("2. Tweak the Recipe");
+        System.out.println("3. Set the Price");
+        System.out.println("4. Make Pitchers of Lemonade");
+        System.out.println("5. Move onto the Selling Phase");
+        System.out.println("6. Quit");
+        System.out.println();
+    }
+
+    private static int readInt(String prompt, int min, int max)
+    {
+        boolean isValid = false;
+        while(!isValid)
+        {
+            System.out.println(prompt);
+            String input = keys.nextLine();
+            try
+            {
+                int result = Integer.parseInt(input);
+                if(result >= min && result <= max)
+                {
+                    // isValid = true;
+                    return result;
+                }
+            }
+            catch(NumberFormatException nfe)
+            {
+                nfe.getMessage();
+            }
+            System.out.println("Enter an integer between " + min + " and " + max);
+        }
+        return -99;  // Should never get here.  could make void.
+    }
+    private static double readDouble(String prompt, double min, double max)  // include place value later?
+    {
+        boolean isValid = false;
+        while(!isValid)
+        {
+            System.out.println(prompt);
+            String input = keys.nextLine();
+            try
+            {
+                double result = Double.parseDouble(input);
+                if(result >= min && result <= max)
+                {
+                    // isValid = true;
+                    return result;
+                }
+            }
+            catch(NumberFormatException nfe)
+            {
+                nfe.getMessage();
+            }
+            System.out.println("Enter an value between " + min + " and " + max);
+        }
+        return -99.99;  // Should never get here.  could make void.
     }
 
 }
