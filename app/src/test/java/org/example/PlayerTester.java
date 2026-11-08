@@ -104,58 +104,68 @@ class PlayerTester
     @Test
     public void testTweakRecipeNegativeLemons0sugar0water()
     {
-        assertEquals(false, player.tweakRecipe(-1, 0, 0));
         assertEquals(0, player.getRecipe().getLemons());
         assertEquals(0, player.getRecipe().getSugar());
-        assertEquals(0, player.getRecipe().getWater());
+        assertEquals(8, player.getRecipe().getWater());
+        assertEquals(false, player.tweakRecipe(-1, 0, 0));
+        assertEquals(0, player.getRecipe().getLemons());  // recipe remains unchanged
+        assertEquals(0, player.getRecipe().getSugar());
+        assertEquals(8, player.getRecipe().getWater());
     }
     @Test
     public void testTweakRecipe0LemonsNegativeSugar0water()
     {
+        assertEquals(0, player.getRecipe().getLemons());
+        assertEquals(0, player.getRecipe().getSugar());
+        assertEquals(8, player.getRecipe().getWater());
         assertEquals(false, player.tweakRecipe(0, -1, 0));
         assertEquals(0, player.getRecipe().getLemons());
         assertEquals(0, player.getRecipe().getSugar());
-        assertEquals(0, player.getRecipe().getWater());
+        assertEquals(8, player.getRecipe().getWater());
     }
     @Test
     public void testTweakRecipe0Lemons0sugarNegativeWater()
     {
+
+        assertEquals(0, player.getRecipe().getLemons());
+        assertEquals(0, player.getRecipe().getSugar());
+        assertEquals(8, player.getRecipe().getWater());
         assertEquals(false, player.tweakRecipe(0, 0, -1));
         assertEquals(0, player.getRecipe().getLemons());
         assertEquals(0, player.getRecipe().getSugar());
-        assertEquals(0, player.getRecipe().getWater());
+        assertEquals(8, player.getRecipe().getWater());
     }
     @Test
     public void testTweakRecipe0lemons0sugar0water()
     {
-        assertEquals(false, player.tweakRecipe(0, 0, 0));
+        assertEquals(true, player.tweakRecipe(0, 0, 0));
         assertEquals(0, player.getRecipe().getLemons());
         assertEquals(0, player.getRecipe().getSugar());
-        assertEquals(0, player.getRecipe().getWater());
+        assertEquals(8, player.getRecipe().getWater());
     }
     @Test
     public void testTweakRecipe1lemons0sugar0water()
     {
-        assertEquals(false, player.tweakRecipe(1, 0, 0));
-        assertEquals(0, player.getRecipe().getLemons());
+        assertEquals(true, player.tweakRecipe(1, 0, 0));
+        assertEquals(1, player.getRecipe().getLemons());
         assertEquals(0, player.getRecipe().getSugar());
-        assertEquals(0, player.getRecipe().getWater());
+        assertEquals(7.75, player.getRecipe().getWater());
     }
     @Test
     public void testTweakRecipe0lemons1sugar0water()
     {
-        assertEquals(false, player.tweakRecipe(0, 1, 0));
+        assertEquals(true, player.tweakRecipe(0, 1, 0));
         assertEquals(0, player.getRecipe().getLemons());
-        assertEquals(0, player.getRecipe().getSugar());
-        assertEquals(0, player.getRecipe().getWater());
+        assertEquals(1, player.getRecipe().getSugar());
+        assertEquals(7.5, player.getRecipe().getWater());
     }
     @Test
     public void testTweakRecipe0lemons0sugar1water()
     {
-        assertEquals(false, player.tweakRecipe(0, 0, 1));
+        assertEquals(true, player.tweakRecipe(0, 0, 1));
         assertEquals(0, player.getRecipe().getLemons());
         assertEquals(0, player.getRecipe().getSugar());
-        assertEquals(0, player.getRecipe().getWater());
+        assertEquals(8, player.getRecipe().getWater());
     }
 
     @Test
@@ -164,15 +174,18 @@ class PlayerTester
         assertEquals(true, player.tweakRecipe(1, 1, 1));
         assertEquals(1, player.getRecipe().getLemons());
         assertEquals(1, player.getRecipe().getSugar());
-        assertEquals(1, player.getRecipe().getWater());
+        assertEquals(7.25, player.getRecipe().getWater());
     }
     @Test
-    public void testTweakRecipe5lemons10sugar12water()
+    public void testTweakRecipe5lemons10sugar12waterOverflow()
     {
-        assertEquals(true, player.tweakRecipe(5, 10, 12));
-        assertEquals(5, player.getRecipe().getLemons());
-        assertEquals(10, player.getRecipe().getSugar());
-        assertEquals(12, player.getRecipe().getWater());
+        assertEquals(0, player.getRecipe().getLemons());
+        assertEquals(0, player.getRecipe().getSugar());
+        assertEquals(8, player.getRecipe().getWater());
+        assertEquals(false, player.tweakRecipe(5, 10, 12));
+        assertEquals(0, player.getRecipe().getLemons());  // overflow. recipe remains same
+        assertEquals(0, player.getRecipe().getSugar());
+        assertEquals(8, player.getRecipe().getWater());
     }
 
     // TEST setPrice
@@ -227,10 +240,10 @@ class PlayerTester
         assertEquals(0, player.getNumPitchers()); //still 0
     }
     @Test
-    public void testMakePitchers1NoRecipe()
+    public void testMakePitchers1DefaultRecipe()
     {
-        assertEquals(false,player.makePitchers(1));  // returns false - never set recipe
-        assertEquals(0, player.getNumPitchers()); //still 0
+        assertEquals(true,player.makePitchers(1));
+        assertEquals(1, player.getNumPitchers());
 
     }
     @Test
@@ -440,5 +453,148 @@ class PlayerTester
         String expected = "0 pitchers and 0 cups of lemonade.";
         assertEquals(expected, player.getLeftOvers(41));
     }
+
+
+    @Test
+    public void payRentNegativeValue()
+    {
+        assertEquals(false, player.payRent(-50));
+    }
+    @Test
+    public void payRent0Value()
+    {
+        assertEquals(100, player.getBalance());
+        assertEquals(true, player.payRent(0));
+        assertEquals(100, player.getBalance());
+    }
+    @Test
+    public void payRent1DollarValue()
+    {
+        assertEquals(100, player.getBalance());
+        assertEquals(true, player.payRent(1));
+        assertEquals(99, player.getBalance());
+    }
+    @Test
+    public void payRent20DollarValue()
+    {
+        assertEquals(100, player.getBalance());
+        assertEquals(true, player.payRent(20));
+        assertEquals(80, player.getBalance());
+    }
+    @Test
+    public void payRent100DollarValue()
+    {
+        assertEquals(100, player.getBalance());
+        assertEquals(true, player.payRent(100));
+        assertEquals(0, player.getBalance());
+    }
+    @Test
+    public void payRent101DollarValue()
+    {
+        assertEquals(100, player.getBalance());
+        assertEquals(false, player.payRent(101));
+        assertEquals(-1, player.getBalance());
+    }
+
+
+    // Test Fluctuating Prices
+    @Test
+    public void testSetPriceLemonNeverAboveOrBelow5PercentChange()
+    {
+        assertEquals(1, player.getPricePerLemon(), 0.01);
+        System.out.println(player.getPricePerLemon());
+        boolean goesAbove5 = false;
+        for(int i = 0; i < 5000; i++)
+        {
+            double oldPrice = player.getPricePerLemon();
+            player.setPricePerLemon();
+            double newPrice = player.getPricePerLemon();
+            double change = (newPrice - oldPrice)/oldPrice;
+            if(Math.abs(change) > .05)
+            {
+                goesAbove5 = true;
+            }
+        }
+        assertEquals(false, goesAbove5);
+    }
+
+    @Test
+    public void testGetMultiplierForPrice0Free()
+    {
+        assertEquals(0.0, player.getPricePerCup());
+        assertEquals(1, player.getMultiplierForPrice());
+    }
+    @Test
+    public void testGetMultiplierForPrice50Cents()
+    {
+        player.setPricePerCup((0.5));
+        assertEquals(0.5, player.getPricePerCup());
+        assertEquals(0.9, player.getMultiplierForPrice());
+    }
+    @Test
+    public void testGetMultiplierForPrice1Dollar()
+    {
+        player.setPricePerCup((1));
+        assertEquals(1, player.getPricePerCup());
+        assertEquals(0.8, player.getMultiplierForPrice());
+    }
+    @Test
+    public void testGetMultiplierForPrice2Dollars()
+    {
+        player.setPricePerCup((2));
+        assertEquals(2, player.getPricePerCup());
+        assertEquals(0.6, player.getMultiplierForPrice());
+    }
+    @Test
+    public void testGetMultiplierForPrice3Dollars()
+    {
+        player.setPricePerCup((3));
+        assertEquals(3, player.getPricePerCup());
+        assertEquals(0.4, player.getMultiplierForPrice());
+    }
+    @Test
+    public void testGetMultiplierForPrice5Dollars()
+    {
+        player.setPricePerCup((5));
+        assertEquals(5, player.getPricePerCup());
+        assertEquals(0, player.getMultiplierForPrice());
+    }
+    @Test
+    public void testGetMultiplierForPrice6Dollars()
+    {
+        player.setPricePerCup((6));
+        assertEquals(6, player.getPricePerCup());
+        assertEquals(0, player.getMultiplierForPrice());
+    }
+    @Test
+    public void testGetMultiplierForPrice1Dollar25Cents()
+    {
+        player.setPricePerCup((1.25));
+        assertEquals(1.25, player.getPricePerCup());
+        assertEquals(0.75, player.getMultiplierForPrice());
+    }
+    @Test
+    public void testGetMultiplierForPrice5Dollar1Cent()
+    {
+        player.setPricePerCup((5.01));
+        assertEquals(5.01, player.getPricePerCup());
+        assertEquals(0, player.getMultiplierForPrice());
+    }
+    @Test
+    public void testGetMultiplierForPrice4Dollar99Cents()
+    {
+        player.setPricePerCup((4.99));
+        assertEquals(4.99, player.getPricePerCup());
+        assertEquals(0.002, player.getMultiplierForPrice(), 0.0001);
+    }
+    @Test
+    public void testGetMultiplierForPrice0Dollar1Cent()
+    {
+        player.setPricePerCup((0.01));
+        assertEquals(0.01, player.getPricePerCup());
+        assertEquals(.998, player.getMultiplierForPrice(), 0.0001);
+    }
+
+
 
 }
