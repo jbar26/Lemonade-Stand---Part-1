@@ -100,7 +100,6 @@ public static void main(String[] args)
                     System.out.print("\n\n" + numCustomers + " customers visited your stand today. ");
                     System.out.print("\nCustomer Review for your Recipe: " + player.getRecipe().getRecipeRating());
                     System.out.print("\nCustomer Feedback on your Price: " + player.getPriceRating());
-
                     player.sellLemonade(numCustomers);
                 }
 
