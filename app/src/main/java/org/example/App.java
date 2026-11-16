@@ -84,18 +84,26 @@ public static void main(String[] args)
             if(!isGameOver)
             {
                 System.out.print("\nDay " + day + ": Selling Phase");
-                System.out.print("\n\nThe customers are coming!");
-                int numCustomers = (int)(Math.random()*50) + 1;
-                //System.out.println("\nnum customers at first: " + numCustomers);
-                numCustomers = (int)Math.round(numCustomers * player.getRecipe().getMultiplierForTastiness());
-                //System.out.println("num customers at after tastiness: " + numCustomers);
-                numCustomers = (int)Math.round(numCustomers * player.getMultiplierForPrice());
-                //System.out.println("num customers at price mult: " + numCustomers);
-                System.out.print("\n\n" + numCustomers + " customers visited your stand today. ");
-                System.out.print("\nCustomer Review for your Recipe: " + player.getRecipe().getRecipeRating());
-                System.out.print("\nCustomer Feedback on your Price: " + player.getPriceRating());
+                if(player.getNumPitchers() <= 0)
+                {
+                    System.out.println("\nYou have no lemonade to sell today.");
+                }
+                else
+                {
+                    System.out.print("\n\nThe customers are coming!");
+                    int numCustomers = (int)(Math.random()*50) + 1;
+                    //System.out.println("\nnum customers at first: " + numCustomers);
+                    numCustomers = (int)Math.round(numCustomers * player.getRecipe().getMultiplierForTastiness());
+                    //System.out.println("num customers at after tastiness: " + numCustomers);
+                    numCustomers = (int)Math.round(numCustomers * player.getMultiplierForPrice());
+                    //System.out.println("num customers at price mult: " + numCustomers);
+                    System.out.print("\n\n" + numCustomers + " customers visited your stand today. ");
+                    System.out.print("\nCustomer Review for your Recipe: " + player.getRecipe().getRecipeRating());
+                    System.out.print("\nCustomer Feedback on your Price: " + player.getPriceRating());
 
-                player.sellLemonade(numCustomers);
+                    player.sellLemonade(numCustomers);
+                }
+
 
                 if(player.getBalance() <=0)
                 {
